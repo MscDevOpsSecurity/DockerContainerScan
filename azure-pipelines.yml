@@ -1,0 +1,64 @@
+trigger:
+  branches:
+    include: 
+    - master
+variables:
+  trivyVersion: 0.21.1
+  buildConfiguration: 'Release'
+  location: 'West Europe'
+  acrHostName: 'mscdevops2021acr.azurecr.io'
+  acrName: 'mscdevops2021acr'
+  rgName: 'mscdevops2021-rg'
+  imageName: 'mscdevops2021im'
+
+stages:
+- stage: CreateResources
+  jobs:
+  - job: CreateResources
+    displayName: TestingTrivy
+    pool:
+      vmImage: 'Ubuntu-20.04'
+    steps:
+
+    - script: |
+        sudo apt-get install rpm
+        wget https://github.com/aquasecurity/trivy/releases/download/v$(trivyVersion)/trivy_$(trivyVersion)_Linux-64bit.deb
+        sudo dpkg -i trivy_$(trivyVersion)_Linux-64bit.deb
+        trivy -v
+      displayName: 'Download and install Trivy'
+
+    # Create or update the ACR resource
+    - task: AzureResourceGroupDeployment@2
+      displayName: 'Azure Deployment:Create Azure Container Registry'
+      inputs:
+        azureSubscription: 'AzureSC'
+        resourceGroupName: '$(rgName)'
+        location: $(location)
+        csmFile: '$(System.DefaultWorkingDirectory)/**/containerRegistry-template.json'
+        overrideParameters: '-registryName "$(acrName)" -registryLocation "$(location)" -registrySku standard' 
+
+    # Build container image
+    - task: Docker@1
+      displayName: 'Build container image'
+      inputs:
+        azureSubscriptionEndpoint: 'AzureSC'
+        azureContainerRegistry: '$(acrHostName)'
+        imageName: '$(imageName):$(Build.BuildId)'
+        useDefaultContext: false
+        buildContext: $(System.DefaultWorkingDirectory)
+    
+    # Let trivy scan the docker image created in the previous task
+    - task: CmdLine@2
+      displayName: "Run trivy scan"
+      inputs:
+        script: |
+          trivy image --exit-code 1 '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
+
+    # Push container image
+    - task: Docker@1
+      displayName: 'Push container image'
+      inputs:
+        azureSubscriptionEndpoint: 'AzureSC'
+        azureContainerRegistry: '$(acrHostName)'
+        command: 'Push an image'
+        imageName: '$(imageName):$(Build.BuildId)'
