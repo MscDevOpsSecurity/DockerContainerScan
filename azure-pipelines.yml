@@ -3,13 +3,13 @@ trigger:
     include: 
     - master
 variables:
-  trivyVersion: 0.21.1
+  trivyVersion: 0.24.4
   buildConfiguration: 'Release'
   location: 'West Europe'
-  acrHostName: 'mscdevops2021acr.azurecr.io'
-  acrName: 'mscdevops2021acr'
-  rgName: 'mscdevops2021-rg'
-  imageName: 'mscdevops2021im'
+  acrHostName: 'mscdevops2022acr.azurecr.io'
+  acrName: 'mscdevops2022acr'
+  rgName: 'mscdevops2022-rg'
+  imageName: 'mscdevops2022im'
 
 stages:
 - stage: CreateResources
