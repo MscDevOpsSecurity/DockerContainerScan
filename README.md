@@ -1,30 +1,30 @@
-# Docker Container Scan
+# Escaneo de contenedores Docker
 
-In this repository we have a simple ASP .NET web application which loads from a docker container.
+En este repositorio tenemos una simple aplicación web en ASP .NET, la cual se carga desde un contenedor de Docker.
 
-We are trying to set up some security in the production pipeline, to avoid pushing breached container images.
+Estamos intentado configurar algo de seguridad en la pipeline de producción, para evitar publicar imágenes corruptas o con brechas de seguridad.
 
-The pipeline works out of the box.
+La pipeline funciona tal cual está.
 
 ## Pipeline
 
-- Open Azure DevOps
-- Connect to this repository in GitHub
-- Create new pipeline from existing yaml file.
-  - Select `azure-pipelines.yml` and that's it!
+- Abre Azure DevOps
+- Conectate a este repositorio de GitHub
+- Crea una nueva pipeline a partir del archivo yaml existente.
+  - Selecciona `azure-pipelines.yml` y ¡eso es todo!
 
 
-## What's happenning :grey_question:
+## Qué está ocurriendo :grey_question:
 
-The idea behind this code and pipeline, is that you are not able to publish any docker image to the Azure Container Registry, unless it is flawless.
+La idea detrás de este código, es que no seas capaz de publicar ninguna imagen de docker al Azure Container Registry, a menos que no tenga fallos de seguridad.
 
-The steps of the pipeline are simple:
-- Install trivy in the ubuntu agent dedicated from Azure hosted agents.
-- Create an Azure Container Registry.
-- Build docker image from Dockerfile contained in the source code.
-- Run scan over such image with trivy
-- Push the docker image if the scan passes.
+Los pasos de la pipeline son simples:
+- Instala trivy en un agente dedicado de ubuntu perteneciente a "Azure hosted agents".
+- Crea un Azure Container Registry.
+- Compila la imagen docker desde el Dockerfile contenido en el código fuente.
+- Ejecuta el escaneo sobre dicha imagen con trivy
+- Publica la imagen docker si el escaneo es válido.
 
-> Note: keep in mind that to execute template deployment operations over Azure Portal, you need to create first a `service connection` :electric_plug:.
+> Nota: ten en cuenta que para ejecutar operaciones de despliegue de templates en el portal de Azure, necesitas crear primero una `service connection` :electric_plug:.
 
-> Note: The yaml file contains variables whose content might be necessary to change in order to avoid collision in Azure world.
+> Nota: el archivo yaml tiene variables, cuyo contenido es necesario cambiar para evitar una colisión de nombres en el mundo Azure.
