@@ -6,10 +6,10 @@ variables:
   trivyVersion: 0.24.4
   buildConfiguration: 'Release'
   location: 'West Europe'
-  acrHostName: 'mscdevops2022acr.azurecr.io'
-  acrName: 'mscdevops2022acr'
-  rgName: 'mscdevops2022-rg'
-  imageName: 'mscdevops2022im'
+  acrHostName: 'mscdevops2023acr.azurecr.io'
+  acrName: 'mscdevops2023acr'
+  rgName: 'mscdevops2023-rg'
+  imageName: 'mscdevops2023im'
 
 stages:
 - stage: CreateResources
