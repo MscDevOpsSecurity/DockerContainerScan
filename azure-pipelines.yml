@@ -10,6 +10,7 @@ variables:
   acrName: 'mscdevops2023acr'
   rgName: 'mscdevops2023-rg'
   imageName: 'mscdevops2023im'
+  azureSubscriptionValue: 'myAzureConnection'
 
 stages:
 - stage: CreateResources
@@ -31,7 +32,7 @@ stages:
     - task: AzureResourceGroupDeployment@2
       displayName: 'Azure Deployment:Create Azure Container Registry'
       inputs:
-        azureSubscription: 'AzureSC'
+        azureSubscription: '$(azureSubscriptionValue)'
         resourceGroupName: '$(rgName)'
         location: $(location)
         csmFile: '$(System.DefaultWorkingDirectory)/**/containerRegistry-template.json'
@@ -41,7 +42,7 @@ stages:
     - task: Docker@1
       displayName: 'Build container image'
       inputs:
-        azureSubscriptionEndpoint: 'AzureSC'
+        azureSubscription: '$(azureSubscriptionValue)'
         azureContainerRegistry: '$(acrHostName)'
         imageName: '$(imageName):$(Build.BuildId)'
         useDefaultContext: false
@@ -52,13 +53,13 @@ stages:
       displayName: "Run trivy scan"
       inputs:
         script: |
-          trivy image --exit-code 1 '$(acrName).azurecr.io/$(imageName):$(Build.BuildId)'
+          trivy image --exit-code 1 '$(imageName):$(Build.BuildId)'
 
     # Push container image
     - task: Docker@1
       displayName: 'Push container image'
       inputs:
-        azureSubscriptionEndpoint: 'AzureSC'
+        azureSubscription: '$(azureSubscriptionValue)'
         azureContainerRegistry: '$(acrHostName)'
         command: 'Push an image'
         imageName: '$(imageName):$(Build.BuildId)'

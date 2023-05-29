@@ -11,6 +11,8 @@ La pipeline funciona tal cual está.
 - Abre Azure DevOps
 - Conectate a este repositorio de GitHub
 - Crea una nueva pipeline a partir del archivo yaml existente.
+  - Define un "ServerConnection" apuntando a la Subscripción de Azure con nombre `myAzureConnection`
+  `Azure DevOps -> Proyect Settings -> Pipelines -> Server Connection --> Añadir Subscripcion Azure `
   - Selecciona `azure-pipelines.yml`
   - Configurar en la pipeline la service connection de los tasks Azure Deployment: *Create Azure Container Registry, Build container image, Push container image* . La service connection utilizada tienes que ser una de las configurada en ***Project Setting-> Service Connection*** que apunta a una *Azure Subscription* valida
   - Adaptar la seciones de variables para definir una Azure Container Registry univoco. En particular hay que cambiar las variables *acrHostName* y *acrName*.
